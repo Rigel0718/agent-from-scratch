@@ -11,9 +11,15 @@ client = OpenAI(api_key=api_key)
 
 MODEL = "gpt-5-mini"
 
+user_input = [
+    {"role": "developer", "content": "you are a helpful assistant."},
+    {"role": "user", "content": "What is the capital of Korea?"}
+]
+
 response = client.responses.create(
     model=MODEL,
-    instructions="You are a helpful assistant.",
-    input="Hello",
+    reasoning={"effort": "none"},
+    input=user_input,
 )
-# print(response.output_text)
+
+print(response.output_text)
