@@ -1,13 +1,4 @@
-from openai import OpenAI
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-
-api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=api_key)
-
-MODEL = "gpt-5-mini"
+from openai_llm_call import call_openai_model
 
 message_history = [
     {"role": "developer", "content": "you are a helpful assistant."},
@@ -20,12 +11,7 @@ while True:
         break
     message_history.append({"role": "user", "content": user_input})
 
-    response = client.responses.create(
-        model=MODEL,
-        input=message_history,
-    )
-
-    assistant_reply = response.output_text
+    assistant_reply = call_openai_model(message_history)
     print(f"Assistant: {assistant_reply}")
 
     message_history.append({"role": "assistant", "content": assistant_reply})

@@ -1,12 +1,6 @@
-from openai import OpenAI
-from dotenv import load_dotenv
-import os
 import json
 
-load_dotenv()
-
-api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=api_key)
+from openai_llm_call import call_openai_model
 
 def read_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -44,11 +38,10 @@ history = [
 step = 0
 
 while True:
-    response = client.responses.create(
-        model="gpt-5-mini",
-        input=history,
+    response = call_openai_model(
+        history,
+        raw_response=True,
         tools=TOOL_SCHEMAS,
-        reasoning={"effort": "none"},
     )
 
     history.extend(response.output)
@@ -92,5 +85,3 @@ while True:
     step += 1
 
 print("MEMORIES", history)
-
-    
