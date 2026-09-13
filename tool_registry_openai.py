@@ -11,6 +11,8 @@ TOOL_REGISTRY = {
 
 MAX_STEPS = 5
 
+TOOL_TIMEOUT = 3
+
 response_history = [
     {"role": "developer", "content": "You are a helpful assistant."},
     {"role": "user", "content": "Please summarize the content of 'example.txt'."}
@@ -65,11 +67,11 @@ while steps < MAX_STEPS:
                         tool_function,
                         **args,
                     )
-                    result = future.result(timeout=3)
+                    result = future.result(timeout=TOOL_TIMEOUT)
 
             except TimeoutError:
                 result = (
-                    f"Tool execution timed out after 3 seconds."
+                    f"Tool execution timed out after {TOOL_TIMEOUT} seconds."
                 )   
 
             except TypeError as e:
