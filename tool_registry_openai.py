@@ -51,7 +51,7 @@ while steps < MAX_STEPS:
         except json.JSONDecodeError as e:
             result = (
                 f"Invalid tool arguments:"
-                f"{type(e).__name__} : {e}, "
+                f"{type(e).__name__}: {e}"
             )
         else:
             tool_function = TOOL_REGISTRY.get(tool_call.name)
