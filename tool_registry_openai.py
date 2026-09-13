@@ -1,4 +1,5 @@
 import json
+from concurrent.futures import ThreadPoolExecutor, TimeoutError
 
 from openai_llm_call import call_openai_model
 from tool_openai import read_file, TOOL_SCHEMAS
@@ -59,7 +60,17 @@ while steps < MAX_STEPS:
                 )
 
             try:
-                result = tool_function(**args)
+                with ThreadPoolExecutor(max_workers=1) as executor:
+                    future = executor.submit(
+                        tool_function,
+                        **args,
+                    )
+                    result = future.result(timeout=3)
+
+            except TimeoutError:
+                result = (
+                    f"Tool execution timed out after 3 seconds."
+                )   
 
             except TypeError as e:
                 result = (
