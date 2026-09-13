@@ -38,21 +38,40 @@ while steps < MAX_STEPS:
         break
 
     for tool_call in tool_calls:
-        args = json.loads(tool_call.arguments)
 
         print(
             f"Tool called: {tool_call.name} "
-            f"with arguments: {args}"
+            f"with arguments: {tool_call.arguments}"
         )
-
-        tool_function = TOOL_REGISTRY.get(tool_call.name)
-
-        if tool_function is None:
-            raise ValueError(
-                f"Tool '{tool_call.name}' is not registered."
+        try:
+            args = json.loads(tool_call.arguments)
+        except json.JSONDecodeError as e:
+            result = (
+                f"Invalid tool arguments:"
+                f"{type(e).__name__} : {e}, "
             )
+        else:
+            tool_function = TOOL_REGISTRY.get(tool_call.name)
 
-        result = tool_function(**args)
+            if tool_function is None:
+                raise ValueError(
+                    f"Tool '{tool_call.name}' is not registered."
+                )
+
+            try:
+                result = tool_function(**args)
+
+            except TypeError as e:
+                result = (
+                    f"Invalid tool arguments: "
+                    f"{type(e).__name__}: {e}"
+                )
+
+            except Exception as e:
+                result = (
+                    f"Tool execution failed: "
+                    f"{type(e).__name__}: {e}"
+                )
 
         response_history.append({
             "type": "function_call_output",
